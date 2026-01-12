@@ -1,9 +1,57 @@
 export const cities = [
-  { id: 1, name: 'New York' },
-  { id: 2, name: 'Los Angeles' },
-  { id: 3, name: 'Chicago' },
-  { id: 4, name: 'Miami' },
-  { id: 5, name: 'San Francisco' }
+  {
+    id: 1,
+    name: 'New York',
+    malls: [
+      { id: 101, name: 'Manhattan Mall', area: 'Midtown', theatres: 3, distance: '2.5 km' },
+      { id: 102, name: 'Westfield World Trade Center', area: 'Financial District', theatres: 2, distance: '4.2 km' },
+      { id: 103, name: 'Queens Center', area: 'Queens', theatres: 4, distance: '8.5 km' }
+    ]
+  },
+  {
+    id: 2,
+    name: 'Los Angeles',
+    malls: [
+      { id: 201, name: 'The Grove', area: 'Fairfax', theatres: 2, distance: '3.1 km' },
+      { id: 202, name: 'Beverly Center', area: 'Beverly Hills', theatres: 3, distance: '5.4 km' },
+      { id: 203, name: 'Westfield Century City', area: 'Century City', theatres: 4, distance: '6.8 km' }
+    ]
+  },
+  {
+    id: 3,
+    name: 'Chicago',
+    malls: [
+      { id: 301, name: 'Water Tower Place', area: 'Magnificent Mile', theatres: 2, distance: '1.8 km' },
+      { id: 302, name: 'Woodfield Mall', area: 'Schaumburg', theatres: 5, distance: '7.2 km' }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Miami',
+    malls: [
+      { id: 401, name: 'Aventura Mall', area: 'Aventura', theatres: 3, distance: '4.5 km' },
+      { id: 402, name: 'Dolphin Mall', area: 'Sweetwater', theatres: 2, distance: '9.1 km' }
+    ]
+  },
+  {
+    id: 5,
+    name: 'San Francisco',
+    malls: [
+      { id: 501, name: 'Westfield San Francisco Centre', area: 'Union Square', theatres: 3, distance: '2.2 km' },
+      { id: 502, name: 'Stonestown Galleria', area: 'Stonestown', theatres: 2, distance: '6.5 km' }
+    ]
+  },
+  {
+    id: 6,
+    name: 'Bangalore',
+    malls: [
+      { id: 601, name: 'Phoenix Marketcity', area: 'Whitefield', theatres: 4, distance: '3.2 km' },
+      { id: 602, name: 'Orion Mall', area: 'Rajajinagar', theatres: 3, distance: '5.5 km' },
+      { id: 603, name: 'Mantri Square', area: 'Malleshwaram', theatres: 2, distance: '4.8 km' },
+      { id: 604, name: 'VR Bangalore', area: 'Whitefield', theatres: 5, distance: '3.5 km' },
+      { id: 605, name: 'Lulu Mall', area: 'Rajajinagar', theatres: 4, distance: '6.2 km' }
+    ]
+  }
 ]
 
 export const genres = [
