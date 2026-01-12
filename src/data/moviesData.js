@@ -166,6 +166,7 @@ export const theatres = [
     address: "123 Main St, Downtown",
     distance: "2.5 km",
     rating: 4.5,
+    coordinates: { lat: 40.7580, lon: -73.9855 }, // Example: Times Square, NYC
     facilities: ["Parking", "Food Court", "Wheelchair Access"],
     screens: [
       {
@@ -190,6 +191,7 @@ export const theatres = [
     address: "456 Park Ave, Central Mall",
     distance: "4.2 km",
     rating: 4.3,
+    coordinates: { lat: 40.7614, lon: -73.9776 }, // Example: Central Park area
     facilities: ["Parking", "Food Court", "Wheelchair Access", "Dolby Atmos"],
     screens: [
       {
@@ -207,6 +209,7 @@ export const theatres = [
     address: "789 Cinema Blvd, West End",
     distance: "6.8 km",
     rating: 4.7,
+    coordinates: { lat: 40.7489, lon: -73.9680 }, // Example: Midtown East
     facilities: ["Parking", "Food Court", "Wheelchair Access", "Recliner Seats"],
     screens: [
       {

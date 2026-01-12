@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
-import { ArrowLeft, MapPin, Star, Calendar, Film, Wifi, Car, Accessibility, UtensilsCrossed, Check } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ArrowLeft, MapPin, Star, Calendar, Film, Wifi, Car, Accessibility, UtensilsCrossed, Check, Navigation, Loader } from 'lucide-react'
 import { theatres } from '../data/moviesData'
 
 const facilityIcons = {
@@ -12,9 +12,27 @@ const facilityIcons = {
   'WiFi': Wifi
 }
 
+// Function to calculate distance between two coordinates (Haversine formula)
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371 // Radius of the Earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLon = (lon2 - lon1) * Math.PI / 180
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+  const distance = R * c
+  return distance.toFixed(1) // Distance in km
+}
+
 export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect }) {
   const [selectedDate, setSelectedDate] = useState('Today')
   const [expandedTheatre, setExpandedTheatre] = useState(null)
+  const [userLocation, setUserLocation] = useState(null)
+  const [locationLoading, setLocationLoading] = useState(false)
+  const [locationError, setLocationError] = useState(null)
+  const [sortedTheatres, setSortedTheatres] = useState(theatres)
 
   const dates = [
     { label: 'Today', value: 'Today', date: 'Jan 10' },
@@ -23,6 +41,45 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
     { label: 'Sun', value: 'Sunday', date: 'Jan 13' }
   ]
 
+  // Get user's current location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      setLocationLoading(true)
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          }
+          setUserLocation(location)
+          setLocationLoading(false)
+
+          // Sort theatres by distance
+          const sorted = theatres.map(theatre => ({
+            ...theatre,
+            calculatedDistance: calculateDistance(
+              location.lat,
+              location.lon,
+              theatre.coordinates.lat,
+              theatre.coordinates.lon
+            )
+          })).sort((a, b) => parseFloat(a.calculatedDistance) - parseFloat(b.calculatedDistance))
+
+          setSortedTheatres(sorted)
+        },
+        (error) => {
+          console.error('Error getting location:', error)
+          setLocationError('Unable to get your location')
+          setLocationLoading(false)
+          setSortedTheatres(theatres)
+        }
+      )
+    } else {
+      setLocationError('Geolocation is not supported')
+      setSortedTheatres(theatres)
+    }
+  }, [])
+
   const handleShowtimeSelect = (theatre, screen, showtime) => {
     onTheatreSelect({
       theatre,
@@ -30,6 +87,40 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
       showtime,
       date: selectedDate
     })
+  }
+
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      setLocationLoading(true)
+      setLocationError(null)
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          }
+          setUserLocation(location)
+          setLocationLoading(false)
+
+          const sorted = theatres.map(theatre => ({
+            ...theatre,
+            calculatedDistance: calculateDistance(
+              location.lat,
+              location.lon,
+              theatre.coordinates.lat,
+              theatre.coordinates.lon
+            )
+          })).sort((a, b) => parseFloat(a.calculatedDistance) - parseFloat(b.calculatedDistance))
+
+          setSortedTheatres(sorted)
+        },
+        (error) => {
+          console.error('Error getting location:', error)
+          setLocationError('Unable to get your location. Please enable location services.')
+          setLocationLoading(false)
+        }
+      )
+    }
   }
 
   return (
@@ -141,13 +232,90 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
           </div>
         </motion.div>
 
-        {/* Date Selection */}
+        {/* Location Status and Date Selection */}
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
           style={{ marginBottom: '30px' }}
         >
+          {/* Location Banner */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '15px 20px',
+            borderRadius: '12px',
+            background: userLocation
+              ? 'linear-gradient(135deg, rgba(6, 255, 165, 0.1), rgba(6, 255, 165, 0.05))'
+              : locationError
+              ? 'linear-gradient(135deg, rgba(255, 0, 110, 0.1), rgba(255, 0, 110, 0.05))'
+              : 'rgba(255, 255, 255, 0.05)',
+            border: userLocation
+              ? '1px solid rgba(6, 255, 165, 0.3)'
+              : locationError
+              ? '1px solid rgba(255, 0, 110, 0.3)'
+              : '1px solid rgba(255, 255, 255, 0.1)',
+            marginBottom: '20px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <MapPin size={20} color={userLocation ? '#06ffa5' : locationError ? '#ff006e' : '#888'} />
+              <div>
+                {locationLoading ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Loader size={16} color="#8338ec" style={{ animation: 'spin 1s linear infinite' }} />
+                    <span style={{ color: '#888', fontSize: '14px' }}>Getting your location...</span>
+                  </div>
+                ) : userLocation ? (
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#06ffa5' }}>
+                      Location detected
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
+                      Showing nearest theatres first
+                    </div>
+                  </div>
+                ) : locationError ? (
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#ff006e' }}>
+                      {locationError}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
+                      Showing all theatres
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: '14px', color: '#888' }}>
+                    Enable location to find nearest theatres
+                  </div>
+                )}
+              </div>
+            </div>
+            {!userLocation && !locationLoading && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleGetLocation}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #8338ec, #6a28c7)',
+                  color: 'white',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Navigation size={16} />
+                Get Location
+              </motion.button>
+            )}
+          </div>
+
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -207,7 +375,7 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
           </h3>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {theatres.map((theatre, index) => (
+            {sortedTheatres.map((theatre, index) => (
               <motion.div
                 key={theatre.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -269,11 +437,17 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
                           marginLeft: '10px',
                           padding: '4px 10px',
                           borderRadius: '6px',
-                          background: 'rgba(255, 255, 255, 0.05)',
+                          background: userLocation && theatre.calculatedDistance
+                            ? 'rgba(6, 255, 165, 0.1)'
+                            : 'rgba(255, 255, 255, 0.05)',
                           fontSize: '12px',
-                          color: '#888'
+                          color: userLocation && theatre.calculatedDistance ? '#06ffa5' : '#888',
+                          fontWeight: userLocation && theatre.calculatedDistance ? '600' : '400',
+                          border: userLocation && theatre.calculatedDistance
+                            ? '1px solid rgba(6, 255, 165, 0.3)'
+                            : 'none'
                         }}>
-                          {theatre.distance}
+                          {theatre.calculatedDistance ? `${theatre.calculatedDistance} km` : theatre.distance}
                         </span>
                       </div>
 
