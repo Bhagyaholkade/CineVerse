@@ -81,7 +81,13 @@ export default function LoginPage({ onLogin, onNavigateToSignUp, onNavigateToFor
       setTimeout(() => {
         setIsLoading(false)
         if (onLogin) {
-          onLogin(loginMethod === 'email' ? formData.email : formData.phone)
+          // Pass user data including email/phone as identifier
+          const userData = {
+            email: loginMethod === 'email' ? formData.email : null,
+            phone: loginMethod === 'phone' ? formData.phone : null,
+            identifier: loginMethod === 'email' ? formData.email : formData.phone
+          }
+          onLogin(userData)
         }
       }, 1500)
     }

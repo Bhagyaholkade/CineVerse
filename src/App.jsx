@@ -81,9 +81,9 @@ function App() {
     setSearchQuery('')
   }
 
-  const handleLogin = (identifier) => {
+  const handleLogin = (userData) => {
     setIsAuthenticated(true)
-    setUser({ identifier })
+    setUser(userData)
     setCurrentPage('home')
   }
 
@@ -122,6 +122,9 @@ function App() {
             searchValue={searchQuery}
             onLogoClick={handleLogoClick}
             onUserClick={handleUserIconClick}
+            isAuthenticated={isAuthenticated}
+            user={user}
+            onLogout={handleLogout}
           />
 
           <AnimatePresence mode="wait">
