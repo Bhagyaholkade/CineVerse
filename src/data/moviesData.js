@@ -47,9 +47,17 @@ export const cities = [
     malls: [
       { id: 601, name: 'Phoenix Marketcity', area: 'Whitefield', theatres: 4, distance: '3.2 km' },
       { id: 602, name: 'Orion Mall', area: 'Rajajinagar', theatres: 3, distance: '5.5 km' },
-      { id: 603, name: 'Mantri Square', area: 'Malleshwaram', theatres: 2, distance: '4.8 km' },
+      { id: 603, name: 'Mantri Square Mall', area: 'Malleshwaram', theatres: 2, distance: '4.8 km' },
       { id: 604, name: 'VR Bangalore', area: 'Whitefield', theatres: 5, distance: '3.5 km' },
-      { id: 605, name: 'Lulu Mall', area: 'Rajajinagar', theatres: 4, distance: '6.2 km' }
+      { id: 605, name: 'Lulu Mall', area: 'Rajajinagar', theatres: 4, distance: '6.2 km' },
+      { id: 606, name: 'Park Square Mall', area: 'ITPL Main Road', theatres: 3, distance: '4.1 km' },
+      { id: 607, name: 'Forum Mall', area: 'Koramangala', theatres: 4, distance: '5.8 km' },
+      { id: 608, name: 'Garuda Mall', area: 'Magrath Road', theatres: 2, distance: '6.5 km' },
+      { id: 609, name: 'UB City Mall', area: 'Vittal Mallya Road', theatres: 2, distance: '7.2 km' },
+      { id: 610, name: 'GT World Mall', area: 'Magadi Road', theatres: 3, distance: '8.1 km' },
+      { id: 611, name: 'Gopalan Arcade Mall', area: 'Bannerghatta Road', theatres: 2, distance: '9.3 km' },
+      { id: 612, name: 'Nexus Shantiniketan', area: 'Whitefield', theatres: 4, distance: '3.8 km' },
+      { id: 613, name: 'RMZ Galleria', area: 'Yelahanka', theatres: 3, distance: '10.2 km' }
     ]
   }
 ]
