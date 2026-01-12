@@ -4,7 +4,9 @@ import { MapPin, ChevronDown, Search, Navigation, ShoppingBag, Film, MapPinned }
 import { cities } from '../data/moviesData'
 
 export default function CitySelector() {
-  const [selectedCity, setSelectedCity] = useState(cities[0])
+  // Find Bangalore as default city (fallback to first city if not found)
+  const bangaloreCity = cities.find(c => c.name === 'Bangalore') || cities[0]
+  const [selectedCity, setSelectedCity] = useState(bangaloreCity)
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [detectedCity, setDetectedCity] = useState(null)
