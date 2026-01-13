@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import MovieCard from '../components/MovieCard'
 import HeroBanner from '../components/HeroBanner'
-import { moviesData } from '../data/moviesData'
+import { moviesAPI } from '../services/api'
 import { ChevronLeft, ChevronRight, TrendingUp, Calendar } from 'lucide-react'
 
 export default function HomePage({ onMovieSelect, onTrailerClick, onWatchPartyClick }) {
@@ -10,9 +10,30 @@ export default function HomePage({ onMovieSelect, onTrailerClick, onWatchPartyCl
   const upcomingRef = useRef(null)
   const [nowShowingPos, setNowShowingPos] = useState(0)
   const [upcomingPos, setUpcomingPos] = useState(0)
+  const [nowShowing, setNowShowing] = useState([])
+  const [upcoming, setUpcoming] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const nowShowing = moviesData.filter(m => m.status === 'now-showing')
-  const upcoming = moviesData.filter(m => m.status === 'upcoming')
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setLoading(true)
+        const [nowShowingRes, upcomingRes] = await Promise.all([
+          moviesAPI.getAll({ status: 'now-showing' }),
+          moviesAPI.getAll({ status: 'upcoming' })
+        ])
+
+        setNowShowing(nowShowingRes.data || [])
+        setUpcoming(upcomingRes.data || [])
+      } catch (error) {
+        console.error('Error fetching movies:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMovies()
+  }, [])
 
   const scroll = (ref, direction, setPos, currentPos) => {
     const container = ref.current
@@ -31,13 +52,28 @@ export default function HomePage({ onMovieSelect, onTrailerClick, onWatchPartyCl
   }
 
   const handleBookNow = (movieId) => {
-    const movie = moviesData.find(m => m.id === movieId)
+    const movie = [...nowShowing, ...upcoming].find(m => m._id === movieId || m.id === movieId)
     if (movie) onMovieSelect(movie)
   }
 
   const handleMoreInfo = (movieId) => {
-    const movie = moviesData.find(m => m.id === movieId)
+    const movie = [...nowShowing, ...upcoming].find(m => m._id === movieId || m.id === movieId)
     if (movie) onTrailerClick(movie)
+  }
+
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '24px',
+        color: '#8338ec'
+      }}>
+        Loading movies...
+      </div>
+    )
   }
 
   return (
@@ -144,7 +180,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick, onWatchPartyCl
         >
           {nowShowing.map((movie, index) => (
             <motion.div
-              key={movie.id}
+              key={movie._id || movie.id}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -261,7 +297,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick, onWatchPartyCl
         >
           {upcoming.map((movie, index) => (
             <motion.div
-              key={movie.id}
+              key={movie._id || movie.id}
               initial={{ opacity: 0, x: 100 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}

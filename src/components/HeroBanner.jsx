@@ -1,19 +1,39 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Play, Info, Star, Clock, Calendar } from 'lucide-react'
-import { bannerMovies } from '../data/moviesData'
+import { moviesAPI } from '../services/api'
 
 export default function HeroBanner({ onBookNow, onMoreInfo }) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(0)
+  const [bannerMovies, setBannerMovies] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const fetchFeaturedMovies = async () => {
+      try {
+        setLoading(true)
+        const response = await moviesAPI.getFeaturedBanner()
+        setBannerMovies(response.data || [])
+      } catch (error) {
+        console.error('Error fetching featured movies:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchFeaturedMovies()
+  }, [])
+
+  useEffect(() => {
+    if (bannerMovies.length === 0) return
+
     const timer = setInterval(() => {
       nextSlide()
     }, 6000)
 
     return () => clearInterval(timer)
-  }, [currentSlide])
+  }, [currentSlide, bannerMovies.length])
 
   const nextSlide = () => {
     setDirection(1)
@@ -28,6 +48,22 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
   const goToSlide = (index) => {
     setDirection(index > currentSlide ? 1 : -1)
     setCurrentSlide(index)
+  }
+
+  if (loading || bannerMovies.length === 0) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: '80px',
+        fontSize: '24px',
+        color: '#8338ec'
+      }}>
+        Loading featured movies...
+      </div>
+    )
   }
 
   const movie = bannerMovies[currentSlide]
@@ -194,7 +230,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                     marginBottom: '15px',
                     flexWrap: 'wrap'
                   }}>
-                    {movie.genre?.split(', ').slice(0, 2).map((genre, i) => (
+                    {(Array.isArray(movie.genre) ? movie.genre : movie.genre?.split(', ') || []).slice(0, 2).map((genre, i) => (
                       <motion.span
                         key={i}
                         initial={{ y: 20, opacity: 0 }}
@@ -371,7 +407,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                       boxShadow: '0 20px 60px rgba(255, 0, 110, 0.6)'
                     }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => onBookNow(movie.id)}
+                    onClick={() => onBookNow(movie._id || movie.id)}
                     style={{
                       padding: '18px 40px',
                       fontSize: '17px',
@@ -412,7 +448,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                       background: 'rgba(255, 255, 255, 0.15)'
                     }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => onMoreInfo(movie.id)}
+                    onClick={() => onMoreInfo(movie._id || movie.id)}
                     style={{
                       padding: '18px 40px',
                       fontSize: '17px',

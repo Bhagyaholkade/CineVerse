@@ -22,6 +22,11 @@ server/.env.local
 server/.env.production
 server/.env.development
 
+# Temporary files
+tmpclaude-*
+server/tmpclaude-*
+.claude/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
