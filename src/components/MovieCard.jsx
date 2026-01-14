@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
-import { Star, Clock, Play, Users, Film } from 'lucide-react'
+import { Star, Clock, Play, Film } from 'lucide-react'
 import { useState } from 'react'
 
-export default function MovieCard({ movie, onClick, onTrailerClick, onWatchPartyClick }) {
+export default function MovieCard({ movie, onClick, onTrailerClick }) {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
@@ -115,6 +115,29 @@ export default function MovieCard({ movie, onClick, onTrailerClick, onWatchParty
               {movie.rating}
             </span>
           </div>
+
+          {/* Language Badge */}
+          <div style={{
+            position: 'absolute',
+            top: '15px',
+            left: '15px',
+            background: movie.language === 'English'
+              ? 'rgba(131, 56, 236, 0.9)'
+              : movie.language === 'Hindi' || movie.language === 'Telugu' || movie.language === 'Tamil' || movie.language === 'Kannada' || movie.language === 'Malayalam'
+              ? 'rgba(255, 0, 110, 0.9)'
+              : 'rgba(58, 134, 255, 0.9)',
+            backdropFilter: 'blur(10px)',
+            padding: '6px 12px',
+            borderRadius: '8px',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: 'white',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }}>
+            {movie.language}
+          </div>
         </div>
 
         {/* Movie Info */}
@@ -167,66 +190,34 @@ export default function MovieCard({ movie, onClick, onTrailerClick, onWatchParty
             {movie.description}
           </p>
 
-          {/* Quick Action Buttons */}
-          <div style={{
-            display: 'flex',
-            gap: '8px',
-            marginBottom: '12px'
-          }}>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={(e) => {
-                e.stopPropagation()
-                onTrailerClick(movie)
-              }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: 'white',
-                fontSize: '12px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                fontFamily: "'Poppins', sans-serif"
-              }}
-            >
-              <Film size={14} />
-              Trailer
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={(e) => {
-                e.stopPropagation()
-                onWatchPartyClick(movie)
-              }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: 'white',
-                fontSize: '12px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                fontFamily: "'Poppins', sans-serif"
-              }}
-            >
-              <Users size={14} />
-              Party
-            </motion.button>
-          </div>
+          {/* Trailer Button */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => {
+              e.stopPropagation()
+              onTrailerClick(movie)
+            }}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '10px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              background: 'rgba(255, 255, 255, 0.05)',
+              color: 'white',
+              fontSize: '12px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '5px',
+              fontFamily: "'Poppins', sans-serif",
+              marginBottom: '12px'
+            }}
+          >
+            <Film size={14} />
+            Watch Trailer
+          </motion.button>
 
           <motion.button
             whileHover={{ scale: 1.05 }}

@@ -9,11 +9,11 @@ import SignUpPage from './pages/SignUpPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import TheatreSelectionPage from './pages/TheatreSelectionPage'
 import SeatSelection from './pages/SeatSelection'
+import PaymentPage from './pages/PaymentPage'
 import BookingConfirmation from './pages/BookingConfirmation'
 import AdminDashboard from './pages/AdminDashboard'
 import MovieTrailer from './components/MovieTrailer'
 import VoiceSearch from './components/VoiceSearch'
-import WatchParty from './components/WatchParty'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -23,13 +23,16 @@ function App() {
   const [showTrailer, setShowTrailer] = useState(false)
   const [trailerMovie, setTrailerMovie] = useState(null)
   const [showVoiceSearch, setShowVoiceSearch] = useState(false)
-  const [showWatchParty, setShowWatchParty] = useState(false)
-  const [watchPartyMovie, setWatchPartyMovie] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
 
   const handleMovieSelect = (movie) => {
+    if (!isAuthenticated) {
+      setSelectedMovie(movie) // Store the movie for later
+      setCurrentPage('login')
+      return
+    }
     setSelectedMovie(movie)
     setCurrentPage('theatres')
   }
@@ -45,19 +48,25 @@ function App() {
     setBookingDetails(null)
   }
 
-  const handleBookingConfirm = (seats, showtime, totalPrice) => {
-    setBookingDetails({ seats, showtime, totalPrice })
+  const handleBookingConfirm = (seats, showtime, totalPrice, seatsTotal, foodTotal, theatre) => {
+    setBookingDetails({
+      seats,
+      showtime,
+      totalPrice,
+      seatsTotal,
+      foodTotal,
+      theatre
+    })
+    setCurrentPage('payment')
+  }
+
+  const handlePaymentSuccess = () => {
     setCurrentPage('confirmation')
   }
 
   const handleTrailerClick = (movie) => {
     setTrailerMovie(movie)
     setShowTrailer(true)
-  }
-
-  const handleWatchPartyClick = (movie) => {
-    setWatchPartyMovie(movie)
-    setShowWatchParty(true)
   }
 
   const handleVoiceSearch = (query) => {
@@ -84,13 +93,23 @@ function App() {
   const handleLogin = (userData) => {
     setIsAuthenticated(true)
     setUser(userData)
-    setCurrentPage('home')
+    // If user was trying to book a movie, continue to theatres page
+    if (selectedMovie) {
+      setCurrentPage('theatres')
+    } else {
+      setCurrentPage('home')
+    }
   }
 
   const handleSignUp = (userData) => {
     setIsAuthenticated(true)
     setUser(userData)
-    setCurrentPage('home')
+    // If user was trying to book a movie, continue to theatres page
+    if (selectedMovie) {
+      setCurrentPage('theatres')
+    } else {
+      setCurrentPage('home')
+    }
   }
 
   const handleLogout = () => {
@@ -133,7 +152,6 @@ function App() {
             key="home"
             onMovieSelect={handleMovieSelect}
             onTrailerClick={handleTrailerClick}
-            onWatchPartyClick={handleWatchPartyClick}
           />
         )}
 
@@ -142,7 +160,6 @@ function App() {
             key="movies"
             onMovieSelect={handleMovieSelect}
             onTrailerClick={handleTrailerClick}
-            onWatchPartyClick={handleWatchPartyClick}
             searchQuery={searchQuery}
           />
         )}
@@ -193,6 +210,16 @@ function App() {
           />
         )}
 
+        {currentPage === 'payment' && selectedMovie && bookingDetails && (
+          <PaymentPage
+            key="payment"
+            movie={selectedMovie}
+            bookingDetails={bookingDetails}
+            onBack={() => setCurrentPage('seats')}
+            onPaymentSuccess={handlePaymentSuccess}
+          />
+        )}
+
         {currentPage === 'confirmation' && selectedMovie && bookingDetails && (
           <BookingConfirmation
             key="confirmation"
@@ -217,13 +244,6 @@ function App() {
         <VoiceSearch
           onClose={() => setShowVoiceSearch(false)}
           onSearch={handleVoiceSearch}
-        />
-      )}
-
-      {showWatchParty && watchPartyMovie && (
-        <WatchParty
-          movie={watchPartyMovie}
-          onClose={() => setShowWatchParty(false)}
         />
       )}
         </>

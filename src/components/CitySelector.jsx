@@ -4,13 +4,12 @@ import { MapPin, ChevronDown, Search, Navigation, ShoppingBag, Film, MapPinned }
 import { cities } from '../data/moviesData'
 
 export default function CitySelector() {
-  // Find Bangalore as default city (fallback to first city if not found)
-  const bangaloreCity = cities.find(c => c.name === 'Bangalore') || cities[0]
-  const [selectedCity, setSelectedCity] = useState(bangaloreCity)
+  // Start with null - will be set by geolocation or fallback to Bangalore
+  const [selectedCity, setSelectedCity] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [detectedCity, setDetectedCity] = useState(null)
-  const [isDetecting, setIsDetecting] = useState(false)
+  const [isDetecting, setIsDetecting] = useState(true) // Start as detecting
   const [activeTab, setActiveTab] = useState('cities') // 'cities' or 'malls'
   const [selectedMall, setSelectedMall] = useState(null)
 
@@ -63,8 +62,16 @@ export default function CitySelector() {
         (error) => {
           console.error('Error getting location:', error)
           setIsDetecting(false)
+          // Fallback to Bangalore if geolocation fails
+          const bangaloreCity = cities.find(c => c.name === 'Bangalore') || cities[0]
+          setSelectedCity(bangaloreCity)
         }
       )
+    } else {
+      // Geolocation not supported, use Bangalore as fallback
+      setIsDetecting(false)
+      const bangaloreCity = cities.find(c => c.name === 'Bangalore') || cities[0]
+      setSelectedCity(bangaloreCity)
     }
   }, [])
 
@@ -150,7 +157,7 @@ export default function CitySelector() {
         ) : (
           <MapPin size={18} color={detectedCity ? "#06ffa5" : "#ff006e"} />
         )}
-        {isDetecting ? 'Detecting...' : selectedMall ? selectedMall.name : selectedCity.name}
+        {isDetecting ? 'Detecting...' : selectedMall ? selectedMall.name : selectedCity?.name || 'Select City'}
         <ChevronDown
           size={16}
           style={{
@@ -359,10 +366,10 @@ export default function CitySelector() {
                           borderRadius: '12px',
                           cursor: 'pointer',
                           marginBottom: '8px',
-                          background: selectedCity.id === city.id
+                          background: selectedCity?.id === city.id
                             ? 'rgba(255, 0, 110, 0.15)'
                             : 'transparent',
-                          border: selectedCity.id === city.id
+                          border: selectedCity?.id === city.id
                             ? '1px solid rgba(255, 0, 110, 0.3)'
                             : '1px solid transparent'
                         }}
@@ -412,7 +419,7 @@ export default function CitySelector() {
                 ) : (
                   // Malls List
                   <>
-                    {selectedCity.malls && selectedCity.malls.length > 0 ? (
+                    {selectedCity?.malls && selectedCity.malls.length > 0 ? (
                       <>
                         <div style={{
                           fontSize: '12px',

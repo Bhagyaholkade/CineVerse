@@ -4,7 +4,7 @@ import { Filter, X, ChevronDown, Star, SlidersHorizontal } from 'lucide-react'
 import MovieCard from '../components/MovieCard'
 import { moviesAPI } from '../services/api'
 
-export default function MovieListingPage({ onMovieSelect, onTrailerClick, onWatchPartyClick, searchQuery = '' }) {
+export default function MovieListingPage({ onMovieSelect, onTrailerClick, searchQuery = '' }) {
   const [showFilters, setShowFilters] = useState(true)
   const [selectedGenres, setSelectedGenres] = useState([])
   const [selectedLanguages, setSelectedLanguages] = useState([])
