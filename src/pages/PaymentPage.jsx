@@ -91,15 +91,17 @@ export default function PaymentPage({ movie, bookingDetails, onBack, onPaymentSu
         </motion.div>
 
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 400px',
-          gap: '30px'
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '30px',
+          flexWrap: 'wrap'
         }}>
           {/* Payment Form */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
+            style={{ flex: '1 1 500px', minWidth: '320px' }}
           >
             {/* Payment Method Selection */}
             <div style={{
@@ -394,6 +396,8 @@ export default function PaymentPage({ movie, bookingDetails, onBack, onPaymentSu
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
             style={{
+              flex: '0 1 400px',
+              minWidth: '320px',
               background: 'rgba(255, 255, 255, 0.05)',
               backdropFilter: 'blur(20px)',
               borderRadius: '20px',

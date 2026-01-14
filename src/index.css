@@ -72,7 +72,12 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Smooth transitions */
-* {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Hide scrollbars for carousel sections */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
