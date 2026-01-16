@@ -21,7 +21,9 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
   const [eventsPos, setEventsPos] = useState(0)
   const [playsPos, setPlaysPos] = useState(0)
   const [selectedLanguage, setSelectedLanguage] = useState('All')
+  const [loading, setLoading] = useState(false)
 
+  // Filter movies by language
   const nowShowing = moviesData.filter(m => {
     if (selectedLanguage === 'All') return m.status === 'now-showing'
     return m.status === 'now-showing' && m.language === selectedLanguage
@@ -101,18 +103,33 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
   }
 
   const handleBookNow = (movieId) => {
-    const movie = moviesData.find(m => m.id === movieId)
+    const movie = [...nowShowing, ...upcoming].find(m => m._id === movieId || m.id === movieId)
     if (movie) onMovieSelect(movie)
   }
 
   const handleMoreInfo = (movieId) => {
-    const movie = moviesData.find(m => m.id === movieId)
+    const movie = [...nowShowing, ...upcoming].find(m => m._id === movieId || m.id === movieId)
     if (movie) onTrailerClick(movie)
   }
 
   const handleEventClick = (event) => {
     // Treat events like movies and navigate to booking
     onMovieSelect(event)
+  }
+
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '24px',
+        color: '#8338ec'
+      }}>
+        Loading movies...
+      </div>
+    )
   }
 
   return (
@@ -314,13 +331,17 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
 
           {/* Language Movies Carousel */}
           <div
-            ref={el => languageScrollRefs.current[selectedLanguage].current = el}
+            ref={el => {
+              if (!languageScrollRefs.current[selectedLanguage]) {
+                languageScrollRefs.current[selectedLanguage] = { current: null }
+              }
+              languageScrollRefs.current[selectedLanguage].current = el
+            }}
+            className="hide-scrollbar"
             style={{
               display: 'flex',
               gap: '30px',
               overflowX: 'auto',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
               padding: '20px 0'
             }}
           >
@@ -435,18 +456,17 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
         {/* Now Showing Movies */}
         <div
           ref={nowShowingRef}
+          className="hide-scrollbar"
           style={{
             display: 'flex',
             gap: '30px',
             overflowX: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
             padding: '20px 0'
           }}
         >
           {nowShowing.map((movie, index) => (
             <motion.div
-              key={movie.id}
+              key={movie._id || movie.id}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -555,18 +575,17 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
         {/* Upcoming Movies */}
         <div
           ref={upcomingRef}
+          className="hide-scrollbar"
           style={{
             display: 'flex',
             gap: '30px',
             overflowX: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
             padding: '20px 0'
           }}
         >
           {upcoming.map((movie, index) => (
             <motion.div
-              key={movie.id}
+              key={movie._id || movie.id}
               initial={{ opacity: 0, x: 100 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -676,12 +695,11 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
         {/* Comedy Shows Carousel */}
         <div
           ref={comedyRef}
+          className="hide-scrollbar"
           style={{
             display: 'flex',
             gap: '30px',
             overflowX: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
             padding: '20px 0'
           }}
         >
@@ -793,12 +811,11 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
         {/* Concerts Carousel */}
         <div
           ref={concertsRef}
+          className="hide-scrollbar"
           style={{
             display: 'flex',
             gap: '30px',
             overflowX: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
             padding: '20px 0'
           }}
         >
@@ -910,12 +927,11 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
         {/* Live Events Carousel */}
         <div
           ref={eventsRef}
+          className="hide-scrollbar"
           style={{
             display: 'flex',
             gap: '30px',
             overflowX: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
             padding: '20px 0'
           }}
         >
@@ -1027,12 +1043,11 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
         {/* Theatre Plays Carousel */}
         <div
           ref={playsRef}
+          className="hide-scrollbar"
           style={{
             display: 'flex',
             gap: '30px',
             overflowX: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
             padding: '20px 0'
           }}
         >

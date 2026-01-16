@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Filter, X, ChevronDown, Star, SlidersHorizontal } from 'lucide-react'
 import MovieCard from '../components/MovieCard'
-import { moviesData, genres, languages } from '../data/moviesData'
+import { moviesAPI } from '../services/api'
 
 export default function MovieListingPage({ onMovieSelect, onTrailerClick, searchQuery = '' }) {
   const [showFilters, setShowFilters] = useState(true)
@@ -12,8 +12,46 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
   const [minRating, setMinRating] = useState(0)
   const [sortBy, setSortBy] = useState('popularity')
   const [showSortMenu, setShowSortMenu] = useState(false)
+  const [allMovies, setAllMovies] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [availableGenres, setAvailableGenres] = useState([])
+  const [availableLanguages, setAvailableLanguages] = useState([])
 
-  const formats = ['2D', '3D', 'IMAX']
+  const formats = ['2D', '3D', 'IMAX', '4DX']
+
+  // Fetch movies from API
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setLoading(true)
+        const response = await moviesAPI.getAll()
+        const movies = response.data || []
+        setAllMovies(movies)
+
+        // Extract unique genres and languages
+        const genresSet = new Set()
+        const languagesSet = new Set()
+
+        movies.forEach(movie => {
+          if (Array.isArray(movie.genre)) {
+            movie.genre.forEach(g => genresSet.add(g))
+          }
+          if (movie.language) {
+            languagesSet.add(movie.language)
+          }
+        })
+
+        setAvailableGenres(Array.from(genresSet).sort())
+        setAvailableLanguages(Array.from(languagesSet).sort())
+      } catch (error) {
+        console.error('Error fetching movies:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMovies()
+  }, [])
 
   const toggleGenre = (genre) => {
     setSelectedGenres(prev =>
@@ -47,7 +85,7 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
   }
 
   const filteredAndSortedMovies = useMemo(() => {
-    let filtered = [...moviesData]
+    let filtered = [...allMovies]
 
     // Search filter
     if (searchQuery) {
@@ -59,9 +97,10 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
 
     // Genre filter
     if (selectedGenres.length > 0) {
-      filtered = filtered.filter(movie =>
-        selectedGenres.some(genre => movie.genre.includes(genre))
-      )
+      filtered = filtered.filter(movie => {
+        const movieGenres = Array.isArray(movie.genre) ? movie.genre : []
+        return selectedGenres.some(genre => movieGenres.includes(genre))
+      })
     }
 
     // Language filter
@@ -73,9 +112,10 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
 
     // Format filter
     if (selectedFormats.length > 0) {
-      filtered = filtered.filter(movie =>
-        selectedFormats.some(format => movie.formats.includes(format))
-      )
+      filtered = filtered.filter(movie => {
+        const movieFormats = Array.isArray(movie.formats) ? movie.formats : []
+        return selectedFormats.some(format => movieFormats.includes(format))
+      })
     }
 
     // Rating filter
@@ -92,10 +132,18 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
         filtered.sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
         break
       case 'price-low':
-        filtered.sort((a, b) => Math.min(...Object.values(a.price)) - Math.min(...Object.values(b.price)))
+        filtered.sort((a, b) => {
+          const priceA = Math.min(...Object.values(a.price || { '2D': 12 }))
+          const priceB = Math.min(...Object.values(b.price || { '2D': 12 }))
+          return priceA - priceB
+        })
         break
       case 'price-high':
-        filtered.sort((a, b) => Math.max(...Object.values(b.price)) - Math.max(...Object.values(a.price)))
+        filtered.sort((a, b) => {
+          const priceA = Math.max(...Object.values(a.price || { '2D': 12 }))
+          const priceB = Math.max(...Object.values(b.price || { '2D': 12 }))
+          return priceB - priceA
+        })
         break
       case 'title':
         filtered.sort((a, b) => a.title.localeCompare(b.title))
@@ -106,7 +154,22 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
     }
 
     return filtered
-  }, [searchQuery, selectedGenres, selectedLanguages, selectedFormats, minRating, sortBy])
+  }, [allMovies, searchQuery, selectedGenres, selectedLanguages, selectedFormats, minRating, sortBy])
+
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '24px',
+        color: '#8338ec'
+      }}>
+        Loading movies...
+      </div>
+    )
+  }
 
   const sortOptions = [
     { value: 'popularity', label: 'Popularity' },
@@ -373,7 +436,7 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
                       flexWrap: 'wrap',
                       gap: '8px'
                     }}>
-                      {genres.map((genre) => (
+                      {availableGenres.map((genre) => (
                         <motion.button
                           key={genre}
                           whileHover={{ scale: 1.05 }}
@@ -415,7 +478,7 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
                       flexWrap: 'wrap',
                       gap: '8px'
                     }}>
-                      {languages.map((language) => (
+                      {availableLanguages.map((language) => (
                         <motion.button
                           key={language}
                           whileHover={{ scale: 1.05 }}
@@ -548,7 +611,7 @@ export default function MovieListingPage({ onMovieSelect, onTrailerClick, search
               >
                 {filteredAndSortedMovies.map((movie, index) => (
                   <motion.div
-                    key={movie.id}
+                    key={movie._id || movie.id}
                     layout
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
