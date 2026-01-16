@@ -11,6 +11,8 @@ import TheatreSelectionPage from './pages/TheatreSelectionPage'
 import SeatSelection from './pages/SeatSelection'
 import PaymentPage from './pages/PaymentPage'
 import BookingConfirmation from './pages/BookingConfirmation'
+import MyBookingsPage from './pages/MyBookingsPage'
+import SettingsPage from './pages/SettingsPage'
 import AdminDashboard from './pages/AdminDashboard'
 import MovieTrailer from './components/MovieTrailer'
 import VoiceSearch from './components/VoiceSearch'
@@ -161,6 +163,8 @@ function App() {
             searchValue={searchQuery}
             onLogoClick={handleLogoClick}
             onUserClick={handleUserIconClick}
+            onMyBookingsClick={() => setCurrentPage('mybookings')}
+            onSettingsClick={() => setCurrentPage('settings')}
             isAuthenticated={isAuthenticated}
             user={user}
             onLogout={handleLogout}
@@ -248,6 +252,23 @@ function App() {
             showtime={bookingDetails.showtime}
             totalPrice={bookingDetails.totalPrice}
             onBackHome={handleBackToHome}
+          />
+        )}
+
+        {currentPage === 'mybookings' && (
+          <MyBookingsPage
+            key="mybookings"
+            onBack={handleBackToHome}
+            user={user}
+          />
+        )}
+
+        {currentPage === 'settings' && (
+          <SettingsPage
+            key="settings"
+            onBack={handleBackToHome}
+            user={user}
+            onUpdateUser={setUser}
           />
         )}
       </AnimatePresence>

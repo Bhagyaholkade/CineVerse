@@ -3,7 +3,7 @@ import { Film, Search, User, Menu, Mic, LogOut, Settings, Ticket, Heart, X, MapP
 import { useState, useEffect, useRef } from 'react'
 import CitySelector from './CitySelector'
 
-export default function Header({ onVoiceSearchClick, onSearch, searchValue = '', onLogoClick, onUserClick, isAuthenticated, user, onLogout }) {
+export default function Header({ onVoiceSearchClick, onSearch, searchValue = '', onLogoClick, onUserClick, onMyBookingsClick, onSettingsClick, isAuthenticated, user, onLogout }) {
   const [scrolled, setScrolled] = useState(false)
   const [localSearch, setLocalSearch] = useState(searchValue)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
@@ -294,14 +294,13 @@ export default function Header({ onVoiceSearchClick, onSearch, searchValue = '',
                           </div>
                           <div style={{ padding: '10px' }}>
                             {[
-                              { icon: Ticket, label: 'My Bookings', color: '#8338ec' },
-                              { icon: Heart, label: 'Favorites', color: '#ff006e' },
-                              { icon: Settings, label: 'Settings', color: '#3a86ff' }
+                              { icon: Ticket, label: 'My Bookings', color: '#8338ec', onClick: () => { setShowProfileMenu(false); onMyBookingsClick?.(); } },
+                              { icon: Settings, label: 'Settings', color: '#3a86ff', onClick: () => { setShowProfileMenu(false); onSettingsClick?.(); } }
                             ].map((item, idx) => (
                               <motion.button
                                 key={idx}
                                 whileHover={{ x: 5, background: 'rgba(255, 255, 255, 0.05)' }}
-                                onClick={() => setShowProfileMenu(false)}
+                                onClick={item.onClick}
                                 style={{
                                   width: '100%',
                                   padding: '12px 15px',
@@ -537,7 +536,8 @@ export default function Header({ onVoiceSearchClick, onSearch, searchValue = '',
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '15px'
+                    gap: '15px',
+                    maxWidth: '100%'
                   }}>
                     <div style={{
                       width: '50px',
@@ -549,11 +549,12 @@ export default function Header({ onVoiceSearchClick, onSearch, searchValue = '',
                       justifyContent: 'center',
                       fontSize: '20px',
                       fontWeight: '700',
-                      boxShadow: '0 5px 15px rgba(255, 0, 110, 0.3)'
+                      boxShadow: '0 5px 15px rgba(255, 0, 110, 0.3)',
+                      flexShrink: 0
                     }}>
                       {user?.name ? user.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || 'U'}
                     </div>
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
                         fontSize: '16px',
                         fontWeight: '700',
@@ -563,15 +564,16 @@ export default function Header({ onVoiceSearchClick, onSearch, searchValue = '',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap'
                       }}>
-                        {user?.name || user?.email || 'User'}
+                        {user?.name || 'Welcome'}
                       </div>
                       {user?.email && (
                         <div style={{
-                          fontSize: '12px',
-                          color: '#888',
+                          fontSize: '11px',
+                          color: '#999',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
+                          maxWidth: '200px'
                         }}>
                           {user.email}
                         </div>
@@ -628,45 +630,105 @@ export default function Header({ onVoiceSearchClick, onSearch, searchValue = '',
               {isAuthenticated && (
                 <>
                   <div style={{
-                    borderRadius: '12px',
+                    borderRadius: '15px',
                     background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
                     overflow: 'hidden',
-                    marginBottom: '20px'
+                    marginBottom: '20px',
+                    backdropFilter: 'blur(10px)'
                   }}>
                     {[
-                      { icon: Ticket, label: 'My Bookings', color: '#8338ec' },
-                      { icon: Heart, label: 'Favorites', color: '#ff006e' },
-                      { icon: Settings, label: 'Settings', color: '#3a86ff' }
+                      { icon: Ticket, label: 'My Bookings', color: '#8338ec', gradient: 'linear-gradient(135deg, rgba(131, 56, 236, 0.15), rgba(131, 56, 236, 0.05))', onClick: () => { setShowMobileMenu(false); onMyBookingsClick?.(); } },
+                      { icon: Settings, label: 'Settings', color: '#3a86ff', gradient: 'linear-gradient(135deg, rgba(58, 134, 255, 0.15), rgba(58, 134, 255, 0.05))', onClick: () => { setShowMobileMenu(false); onSettingsClick?.(); } }
                     ].map((item, idx) => (
                       <motion.button
                         key={idx}
-                        whileHover={{ x: 5, background: 'rgba(255, 255, 255, 0.05)' }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => setShowMobileMenu(false)}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        whileHover={{ 
+                          x: 8, 
+                          background: item.gradient,
+                          transition: { duration: 0.2 }
+                        }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={item.onClick}
                         style={{
                           width: '100%',
-                          padding: '16px',
+                          padding: '18px 16px',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '15px',
                           background: 'transparent',
                           border: 'none',
-                          borderBottom: idx < 2 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
+                          borderBottom: idx < 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
                           color: 'white',
                           cursor: 'pointer',
                           fontSize: '15px',
+                          fontWeight: '500',
                           textAlign: 'left',
-                          fontFamily: "'Poppins', sans-serif"
+                          fontFamily: "'Poppins', sans-serif",
+                          position: 'relative',
+                          overflow: 'hidden'
                         }}
                       >
-                        <item.icon size={20} color={item.color} />
-                        <span>{item.label}</span>
+                        {/* Icon with animated background */}
+                        <motion.div
+                          whileHover={{ rotate: 360, scale: 1.1 }}
+                          transition={{ duration: 0.5 }}
+                          style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '12px',
+                            background: item.gradient,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            boxShadow: `0 4px 15px ${item.color}40`
+                          }}
+                        >
+                          <item.icon size={20} color={item.color} strokeWidth={2.5} />
+                        </motion.div>
+                        
+                        {/* Label */}
+                        <span style={{ flex: 1 }}>{item.label}</span>
+                        
+                        {/* Arrow indicator */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          whileHover={{ opacity: 1, x: 0 }}
+                          style={{
+                            color: item.color,
+                            fontSize: '18px',
+                            fontWeight: '700'
+                          }}
+                        >
+                          →
+                        </motion.div>
+                        
+                        {/* Hover glow effect */}
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          whileHover={{ opacity: 0.1 }}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: `radial-gradient(circle at center, ${item.color}, transparent 70%)`,
+                            pointerEvents: 'none'
+                          }}
+                        />
                       </motion.button>
                     ))}
                   </div>
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    whileHover={{ scale: 1.02, boxShadow: '0 8px 25px rgba(255, 0, 110, 0.4)' }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
                       setShowMobileMenu(false)
@@ -674,22 +736,23 @@ export default function Header({ onVoiceSearchClick, onSearch, searchValue = '',
                     }}
                     style={{
                       width: '100%',
-                      padding: '15px',
+                      padding: '16px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '12px',
                       background: 'rgba(255, 0, 110, 0.1)',
-                      border: '1px solid rgba(255, 0, 110, 0.3)',
-                      borderRadius: '12px',
+                      border: '2px solid rgba(255, 0, 110, 0.3)',
+                      borderRadius: '15px',
                       color: '#ff006e',
                       cursor: 'pointer',
                       fontSize: '15px',
-                      fontWeight: '600',
-                      fontFamily: "'Poppins', sans-serif"
+                      fontWeight: '700',
+                      fontFamily: "'Poppins', sans-serif",
+                      transition: 'all 0.3s ease'
                     }}
                   >
-                    <LogOut size={20} />
+                    <LogOut size={20} strokeWidth={2.5} />
                     <span>Logout</span>
                   </motion.button>
                 </>

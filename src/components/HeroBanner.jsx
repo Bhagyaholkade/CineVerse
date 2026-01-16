@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Play, Info, Star, Clock, Calendar } from 'lucide-react'
 import { moviesAPI } from '../services/api'
+import { moviesData } from '../data/moviesData'
 
 export default function HeroBanner({ onBookNow, onMoreInfo }) {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -26,7 +27,15 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
         const response = await moviesAPI.getFeaturedBanner()
         setBannerMovies(response.data || [])
       } catch (error) {
-        console.error('Error fetching featured movies:', error)
+        console.error('Error fetching featured movies, using local data:', error)
+        // Fallback to local data - use featured movies from moviesData
+        const featuredMovies = moviesData.filter(m => m.featured).slice(0, 5)
+        if (featuredMovies.length === 0) {
+          // If no featured movies, use first 5 now-showing movies
+          setBannerMovies(moviesData.filter(m => m.status === 'now-showing').slice(0, 5))
+        } else {
+          setBannerMovies(featuredMovies)
+        }
       } finally {
         setLoading(false)
       }
@@ -185,7 +194,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                   alt={movie.title}
                   style={{
                     width: '100%',
-                    height: isMobile ? '300px' : '700px',
+                    height: isMobile ? '450px' : '700px',
                     objectFit: 'cover',
                     display: 'block'
                   }}
