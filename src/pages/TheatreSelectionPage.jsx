@@ -130,14 +130,14 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
       exit={{ opacity: 0 }}
       style={{
         minHeight: '100vh',
-        paddingTop: '100px',
+        paddingTop: 'clamp(80px, 12vh, 100px)',
         paddingBottom: '50px'
       }}
     >
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '0 40px'
+        padding: '0 clamp(15px, 4vw, 40px)'
       }}>
         {/* Back Button */}
         <motion.button
@@ -187,15 +187,15 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
           />
           <div style={{ flex: 1 }}>
             <h1 style={{
-              fontSize: '32px',
+              fontSize: 'clamp(22px, 5vw, 32px)',
               fontWeight: '700',
               marginBottom: '8px',
               fontFamily: "'Orbitron', sans-serif"
             }}>
               {movie.title}
             </h1>
-            <p style={{ color: '#888', marginBottom: '15px', fontSize: '14px' }}>
-              {Array.isArray(movie.genre) ? movie.genre.join(', ') : movie.genre} • {movie.duration} • {movie.language}
+            <p style={{ color: '#888', marginBottom: '15px', fontSize: 'clamp(12px, 2.5vw, 14px)' }}>
+              {Array.isArray(movie.genre) ? movie.genre.join(', ') : (movie.genre || movie.category)} • {movie.duration}{movie.language ? ` • ${movie.language}` : ''}
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{
@@ -212,7 +212,7 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
                   {movie.rating}
                 </span>
               </div>
-              {movie.formats.map(format => (
+              {movie.formats && movie.formats.map(format => (
                 <div
                   key={format}
                   style={{
@@ -324,14 +324,14 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
           }}>
             <Calendar size={20} color="#888" />
             <h3 style={{
-              fontSize: '20px',
+              fontSize: 'clamp(18px, 3.5vw, 20px)',
               fontWeight: '600',
               fontFamily: "'Orbitron', sans-serif"
             }}>
               Select Date
             </h3>
           </div>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '12px' }}>
             {dates.map(({ label, value, date }) => (
               <motion.button
                 key={value}
@@ -366,7 +366,7 @@ export default function TheatreSelectionPage({ movie, onBack, onTheatreSelect })
         {/* Theatres List */}
         <div style={{ marginBottom: '30px' }}>
           <h3 style={{
-            fontSize: '20px',
+            fontSize: 'clamp(18px, 3.5vw, 20px)',
             fontWeight: '600',
             marginBottom: '20px',
             fontFamily: "'Orbitron', sans-serif"

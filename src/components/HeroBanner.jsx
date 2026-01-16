@@ -6,6 +6,16 @@ import { bannerMovies } from '../data/moviesData'
 export default function HeroBanner({ onBookNow, onMoreInfo }) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(0)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -35,12 +45,12 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
   return (
     <div style={{
       position: 'relative',
-      minHeight: '100vh',
+      minHeight: isMobile ? 'auto' : '100vh',
       width: '100%',
       overflow: 'hidden',
       marginTop: '80px',
-      paddingTop: '40px',
-      paddingBottom: '180px',
+      paddingTop: isMobile ? '10px' : '40px',
+      paddingBottom: isMobile ? '40px' : '180px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
@@ -85,7 +95,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
         position: 'relative',
         width: '100%',
         maxWidth: '1400px',
-        padding: '0 60px',
+        padding: isMobile ? '0 20px' : '0 60px',
         zIndex: 1
       }}>
         <AnimatePresence mode="wait" custom={direction}>
@@ -97,10 +107,10 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
             transition={{ duration: 0.5 }}
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '60px',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: isMobile ? '20px' : '60px',
               alignItems: 'center',
-              minHeight: '600px'
+              minHeight: isMobile ? 'auto' : '600px'
             }}
           >
             {/* Left Side - Movie Poster Card */}
@@ -139,7 +149,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                   alt={movie.title}
                   style={{
                     width: '100%',
-                    height: '700px',
+                    height: isMobile ? '300px' : '700px',
                     objectFit: 'cover',
                     display: 'block'
                   }}
@@ -285,7 +295,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
                   style={{
-                    display: 'inline-block',
+                    display: isMobile ? 'none' : 'inline-block',
                     padding: '10px 24px',
                     borderRadius: '30px',
                     background: 'linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(131, 56, 236, 0.2))',
@@ -307,9 +317,9 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.6 }}
                   style={{
-                    fontSize: '56px',
+                    fontSize: isMobile ? '32px' : '56px',
                     fontWeight: '900',
-                    marginBottom: '20px',
+                    marginBottom: isMobile ? '12px' : '20px',
                     fontFamily: "'Orbitron', sans-serif",
                     lineHeight: '1.1',
                     position: 'relative'
@@ -343,12 +353,12 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.6, duration: 0.6 }}
                   style={{
-                    fontSize: '19px',
+                    fontSize: isMobile ? '14px' : '19px',
                     color: '#b0b0b0',
-                    marginBottom: '30px',
+                    marginBottom: isMobile ? '20px' : '30px',
                     fontWeight: '300',
                     fontStyle: 'italic',
-                    lineHeight: '1.6'
+                    lineHeight: '1.5'
                   }}
                 >
                   {movie.tagline}
@@ -361,8 +371,9 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                   transition={{ delay: 0.7, duration: 0.6 }}
                   style={{
                     display: 'flex',
-                    gap: '20px',
-                    marginBottom: '40px'
+                    flexDirection: isMobile ? 'column' : 'row',
+                    gap: isMobile ? '12px' : '20px',
+                    marginBottom: isMobile ? '0' : '40px'
                   }}
                 >
                   <motion.button
@@ -373,8 +384,8 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => onBookNow(movie.id)}
                     style={{
-                      padding: '18px 40px',
-                      fontSize: '17px',
+                      padding: isMobile ? '14px 30px' : '18px 40px',
+                      fontSize: isMobile ? '15px' : '17px',
                       fontWeight: '700',
                       borderRadius: '50px',
                       border: 'none',
@@ -383,11 +394,13 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
+                      justifyContent: 'center',
                       gap: '10px',
                       fontFamily: "'Poppins', sans-serif",
                       boxShadow: '0 15px 40px rgba(255, 0, 110, 0.4)',
                       position: 'relative',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      width: isMobile ? '100%' : 'auto'
                     }}
                   >
                     <motion.div
@@ -414,8 +427,8 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => onMoreInfo(movie.id)}
                     style={{
-                      padding: '18px 40px',
-                      fontSize: '17px',
+                      padding: isMobile ? '14px 30px' : '18px 40px',
+                      fontSize: isMobile ? '15px' : '17px',
                       fontWeight: '700',
                       borderRadius: '50px',
                       border: '2px solid rgba(255, 255, 255, 0.3)',
@@ -425,9 +438,11 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
+                      justifyContent: 'center',
                       gap: '10px',
                       fontFamily: "'Poppins', sans-serif",
-                      transition: 'all 0.3s'
+                      transition: 'all 0.3s',
+                      width: isMobile ? '100%' : 'auto'
                     }}
                   >
                     <Info size={22} />
@@ -441,7 +456,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.9 }}
                   style={{
-                    display: 'grid',
+                    display: isMobile ? 'none' : 'grid',
                     gridTemplateColumns: 'repeat(3, 1fr)',
                     gap: '15px'
                   }}
@@ -496,7 +511,7 @@ export default function HeroBanner({ onBookNow, onMoreInfo }) {
         bottom: '60px',
         left: '50%',
         transform: 'translateX(-50%)',
-        display: 'flex',
+        display: isMobile ? 'none' : 'flex',
         gap: '12px',
         zIndex: 10,
         padding: '12px 20px',

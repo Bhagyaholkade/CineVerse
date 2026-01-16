@@ -42,11 +42,14 @@ export default function PaymentPage({ movie, bookingDetails, onBack, onPaymentSu
   return (
     <div style={{
       minHeight: '100vh',
-      padding: '40px 20px',
+      paddingTop: 'clamp(100px, 15vh, 140px)',
+      paddingBottom: 'clamp(20px, 5vw, 40px)',
+      paddingLeft: '15px',
+      paddingRight: '15px',
       color: 'white'
     }}>
       <div style={{
-        maxWidth: '900px',
+        maxWidth: '1100px',
         margin: '0 auto'
       }}>
         {/* Header */}
@@ -79,22 +82,24 @@ export default function PaymentPage({ movie, bookingDetails, onBack, onPaymentSu
           </motion.button>
           <div>
             <h1 style={{
-              fontSize: '32px',
+              fontSize: 'clamp(24px, 5vw, 32px)',
               fontWeight: '700',
               fontFamily: "'Orbitron', sans-serif",
               marginBottom: '5px'
             }}>
               Payment
             </h1>
-            <p style={{ color: '#888', fontSize: '14px' }}>Complete your booking</p>
+            <p style={{ color: '#888', fontSize: 'clamp(12px, 2vw, 14px)' }}>Complete your booking</p>
           </div>
         </motion.div>
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 400px',
+          gridTemplateColumns: '1fr',
           gap: '30px'
-        }}>
+        }}
+          className="payment-grid-responsive"
+        >
           {/* Payment Form */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -111,15 +116,16 @@ export default function PaymentPage({ movie, bookingDetails, onBack, onPaymentSu
               marginBottom: '20px'
             }}>
               <h2 style={{
-                fontSize: '20px',
+                fontSize: 'clamp(18px, 3vw, 20px)',
                 fontWeight: '600',
                 marginBottom: '20px'
               }}>
                 Select Payment Method
               </h2>
               <div style={{
-                display: 'flex',
-                gap: '15px'
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+                gap: '12px'
               }}>
                 {paymentMethods.map((method) => {
                   const Icon = method.icon
@@ -423,7 +429,7 @@ export default function PaymentPage({ movie, bookingDetails, onBack, onPaymentSu
                 {movie.title}
               </h3>
               <p style={{ color: '#888', fontSize: '14px' }}>
-                {movie.genre.join(', ')}
+                {Array.isArray(movie.genre) ? movie.genre.join(', ') : (movie.genre || movie.category || 'Event')}
               </p>
             </div>
 

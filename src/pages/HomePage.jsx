@@ -111,18 +111,18 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
   }
 
   const handleEventClick = (event) => {
-    // Handle event booking - for now just show alert
-    console.log('Event clicked:', event)
+    // Treat events like movies and navigate to booking
+    onMovieSelect(event)
   }
 
   return (
-    <div style={{ minHeight: '100vh', paddingBottom: '80px' }}>
+    <div style={{ minHeight: '100vh', paddingBottom: window.innerWidth <= 768 ? '40px' : '80px' }}>
       {/* Hero Banner Slider */}
       <HeroBanner onBookNow={handleBookNow} onMoreInfo={handleMoreInfo} />
 
-      {/* Language Filter Section */}
+      {/* Language Filter Section - Compact Mobile Version */}
       <div style={{
-        padding: '40px',
+        padding: window.innerWidth <= 768 ? '20px 15px' : '40px 20px',
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
@@ -132,20 +132,20 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
           style={{
             background: 'rgba(255, 255, 255, 0.03)',
             backdropFilter: 'blur(20px)',
-            borderRadius: '20px',
+            borderRadius: '15px',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            padding: '30px'
+            padding: window.innerWidth <= 768 ? '15px' : '20px'
           }}
         >
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '15px',
-            marginBottom: '25px'
+            gap: '10px',
+            marginBottom: window.innerWidth <= 768 ? '12px' : '20px'
           }}>
-            <Globe2 size={28} color="#ff006e" />
+            <Globe2 size={window.innerWidth <= 768 ? 20 : 24} color="#ff006e" />
             <h2 style={{
-              fontSize: '28px',
+              fontSize: 'clamp(18px, 4vw, 28px)',
               fontWeight: '700',
               fontFamily: "'Orbitron', sans-serif"
             }}>
@@ -154,34 +154,35 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
           </div>
 
           <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '12px'
+            display: 'grid',
+            gridTemplateColumns: window.innerWidth <= 768 ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(150px, 1fr))',
+            gap: window.innerWidth <= 768 ? '8px' : '12px'
           }}>
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedLanguage('All')}
               style={{
-                padding: '12px 24px',
-                borderRadius: '12px',
+                padding: window.innerWidth <= 768 ? '10px 12px' : '10px 16px',
+                borderRadius: '10px',
                 border: selectedLanguage === 'All' ? '2px solid #ff006e' : '1px solid rgba(255, 255, 255, 0.2)',
                 background: selectedLanguage === 'All'
                   ? 'linear-gradient(135deg, #ff006e, #8338ec)'
                   : 'rgba(255, 255, 255, 0.05)',
                 color: 'white',
-                fontSize: '14px',
+                fontSize: window.innerWidth <= 768 ? '12px' : '14px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 fontFamily: "'Poppins', sans-serif",
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                justifyContent: 'center',
+                gap: '6px',
                 boxShadow: selectedLanguage === 'All' ? '0 5px 20px rgba(255, 0, 110, 0.3)' : 'none'
               }}
             >
-              <Film size={18} />
-              All Movies ({moviesData.length})
+              <Film size={window.innerWidth <= 768 ? 14 : 18} />
+              <span>All ({moviesData.length})</span>
             </motion.button>
 
             {languages.map((lang) => {
@@ -195,25 +196,28 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedLanguage(lang)}
                   style={{
-                    padding: '12px 24px',
-                    borderRadius: '12px',
+                    padding: window.innerWidth <= 768 ? '10px 12px' : '12px 24px',
+                    borderRadius: '10px',
                     border: selectedLanguage === lang ? '2px solid #ff006e' : '1px solid rgba(255, 255, 255, 0.2)',
                     background: selectedLanguage === lang
                       ? 'linear-gradient(135deg, #ff006e, #8338ec)'
                       : 'rgba(255, 255, 255, 0.05)',
                     color: 'white',
-                    fontSize: '14px',
+                    fontSize: window.innerWidth <= 768 ? '12px' : '14px',
                     fontWeight: '600',
                     cursor: 'pointer',
                     fontFamily: "'Poppins', sans-serif",
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    justifyContent: 'center',
+                    gap: '6px',
                     boxShadow: selectedLanguage === lang ? '0 5px 20px rgba(255, 0, 110, 0.3)' : 'none'
                   }}
                 >
-                  <span style={{ fontSize: '20px' }}>{getLanguageIcon(lang)}</span>
-                  {lang} ({movieCount})
+                  <span style={{ fontSize: window.innerWidth <= 768 ? '16px' : '20px' }}>{getLanguageIcon(lang)}</span>
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {window.innerWidth <= 768 ? lang.substring(0, 3) : lang} ({movieCount})
+                  </span>
                 </motion.button>
               )
             })}
@@ -224,7 +228,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
       {/* Language-Specific Movies Section */}
       {selectedLanguage !== 'All' && moviesByLanguage[selectedLanguage]?.length > 0 && (
         <div style={{
-          padding: '40px',
+          padding: '40px 20px',
           maxWidth: '1400px',
           margin: '0 auto'
         }}>
@@ -326,13 +330,17 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
                 initial={{ opacity: 0, x: 100 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                style={{ minWidth: '320px' }}
+                style={{ 
+                  minWidth: '320px',
+                  height: '100%',
+                  display: 'flex'
+                }}
               >
                 <MovieCard
                   movie={movie}
                   onClick={onMovieSelect}
                   onTrailerClick={onTrailerClick}
-                                  />
+                />
               </motion.div>
             ))}
           </div>
@@ -341,7 +349,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
 
       {/* Now Showing Section */}
       <div style={{
-        padding: '80px 40px 40px',
+        padding: window.innerWidth <= 768 ? '30px 15px 20px' : '60px 20px 40px',
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
@@ -369,20 +377,20 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
             </div>
             <div>
               <h2 style={{
-                fontSize: '36px',
+                fontSize: 'clamp(24px, 6vw, 36px)',
                 fontWeight: '700',
                 fontFamily: "'Orbitron', sans-serif",
                 marginBottom: '5px'
               }}>
                 Now Showing
               </h2>
-              <p style={{ color: '#888', fontSize: '14px' }}>
+              <p style={{ color: '#888', fontSize: 'clamp(12px, 2vw, 14px)' }}>
                 {nowShowing.length} movies currently playing
               </p>
             </div>
           </motion.div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -442,13 +450,17 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              style={{ minWidth: '320px' }}
+              style={{ 
+                minWidth: '320px',
+                height: '100%',
+                display: 'flex'
+              }}
             >
               <MovieCard
                 movie={movie}
                 onClick={onMovieSelect}
                 onTrailerClick={onTrailerClick}
-                              />
+              />
             </motion.div>
           ))}
         </div>
@@ -456,7 +468,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
 
       {/* Upcoming Movies Section */}
       <div style={{
-        padding: '40px',
+        padding: window.innerWidth <= 768 ? '20px 15px' : '40px 20px',
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
@@ -485,14 +497,14 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
             </div>
             <div>
               <h2 style={{
-                fontSize: '36px',
+                fontSize: 'clamp(24px, 6vw, 36px)',
                 fontWeight: '700',
                 fontFamily: "'Orbitron', sans-serif",
                 marginBottom: '5px'
               }}>
                 Coming Soon
               </h2>
-              <p style={{ color: '#888', fontSize: '14px' }}>
+              <p style={{ color: '#888', fontSize: 'clamp(12px, 2vw, 14px)' }}>
                 {upcoming.length} upcoming releases
               </p>
             </div>
@@ -559,13 +571,17 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              style={{ minWidth: '320px' }}
+              style={{ 
+                minWidth: '320px',
+                height: '100%',
+                display: 'flex'
+              }}
             >
               <MovieCard
                 movie={movie}
                 onClick={onMovieSelect}
                 onTrailerClick={onTrailerClick}
-                              />
+              />
             </motion.div>
           ))}
         </div>
@@ -573,7 +589,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
 
       {/* Comedy Shows Section */}
       <div style={{
-        padding: '40px',
+        padding: window.innerWidth <= 768 ? '20px 15px' : '40px 20px',
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
@@ -602,14 +618,14 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
             </div>
             <div>
               <h2 style={{
-                fontSize: '36px',
+                fontSize: 'clamp(20px, 5vw, 36px)',
                 fontWeight: '700',
                 fontFamily: "'Orbitron', sans-serif",
                 marginBottom: '5px'
               }}>
                 Stand-Up Comedy Shows
               </h2>
-              <p style={{ color: '#888', fontSize: '14px' }}>
+              <p style={{ color: '#888', fontSize: 'clamp(11px, 2vw, 14px)' }}>
                 {comedyShows.length} shows available - Get ready to laugh!
               </p>
             </div>
@@ -676,7 +692,11 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              style={{ minWidth: '320px' }}
+              style={{ 
+                minWidth: '320px',
+                height: '100%',
+                display: 'flex'
+              }}
             >
               <EventCard event={show} onClick={handleEventClick} />
             </motion.div>
@@ -686,7 +706,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
 
       {/* Live Concerts Section */}
       <div style={{
-        padding: '40px',
+        padding: window.innerWidth <= 768 ? '20px 15px' : '40px 20px',
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
@@ -789,7 +809,11 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              style={{ minWidth: '320px' }}
+              style={{ 
+                minWidth: '320px',
+                height: '100%',
+                display: 'flex'
+              }}
             >
               <EventCard event={concert} onClick={handleEventClick} />
             </motion.div>
@@ -799,7 +823,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
 
       {/* Live Events Section */}
       <div style={{
-        padding: '40px',
+        padding: window.innerWidth <= 768 ? '20px 15px' : '40px 20px',
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
@@ -902,7 +926,11 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              style={{ minWidth: '320px' }}
+              style={{ 
+                minWidth: '320px',
+                height: '100%',
+                display: 'flex'
+              }}
             >
               <EventCard event={event} onClick={handleEventClick} />
             </motion.div>
@@ -912,7 +940,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
 
       {/* Theatre & Plays Section */}
       <div style={{
-        padding: '40px',
+        padding: '40px 20px',
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
@@ -1015,7 +1043,11 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              style={{ minWidth: '320px' }}
+              style={{ 
+                minWidth: '320px',
+                height: '100%',
+                display: 'flex'
+              }}
             >
               <EventCard event={play} onClick={handleEventClick} />
             </motion.div>
@@ -1030,13 +1062,15 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
         style={{
-          margin: '100px auto 80px',
-          padding: '60px 40px',
+          margin: window.innerWidth <= 768 ? '30px 15px 20px' : '60px 20px 40px',
+          padding: window.innerWidth <= 768 ? '25px 18px' : 'clamp(30px, 6vw, 60px) clamp(20px, 4vw, 40px)',
           borderRadius: '20px',
           background: 'rgba(20, 20, 30, 0.6)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255, 255, 255, 0.08)',
           maxWidth: '1400px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
           textAlign: 'center'
         }}
       >
@@ -1045,9 +1079,9 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
           style={{
-            fontSize: '42px',
+            fontSize: window.innerWidth <= 768 ? '22px' : 'clamp(28px, 7vw, 42px)',
             fontWeight: '700',
-            marginBottom: '15px',
+            marginBottom: window.innerWidth <= 768 ? '8px' : '15px',
             fontFamily: "'Orbitron', sans-serif",
             color: 'white'
           }}
@@ -1059,11 +1093,12 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
           style={{
-            fontSize: '16px',
+            fontSize: window.innerWidth <= 768 ? '12px' : 'clamp(14px, 2.5vw, 16px)',
             color: '#999',
             maxWidth: '650px',
-            margin: '0 auto 50px',
-            lineHeight: '1.5'
+            margin: window.innerWidth <= 768 ? '0 auto 18px' : '0 auto 40px',
+            lineHeight: '1.6',
+            padding: '0 15px'
           }}
         >
           Dolby Atmos sound, 4K projection, luxury recliner seats, and an
@@ -1072,9 +1107,9 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '25px',
-          marginTop: '40px'
+          gridTemplateColumns: window.innerWidth <= 768 ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(150px, 1fr))',
+          gap: window.innerWidth <= 768 ? '10px' : 'clamp(15px, 3vw, 25px)',
+          marginTop: window.innerWidth <= 768 ? '15px' : 'clamp(25px, 5vw, 40px)'
         }}>
           {[
             { icon: '🎬', title: '4K Projection', desc: 'Crystal clear visuals' },
@@ -1093,8 +1128,8 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
                 scale: 1.02
               }}
               style={{
-                padding: '35px 25px',
-                borderRadius: '16px',
+                padding: window.innerWidth <= 768 ? '14px 10px' : 'clamp(20px, 4vw, 35px) clamp(15px, 3vw, 25px)',
+                borderRadius: window.innerWidth <= 768 ? '12px' : '16px',
                 background: 'rgba(255, 255, 255, 0.03)',
                 border: '1px solid rgba(255, 255, 255, 0.06)',
                 textAlign: 'center',
@@ -1106,23 +1141,23 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
                 whileHover={{ scale: 1.15 }}
                 transition={{ type: "spring", stiffness: 400 }}
                 style={{
-                  fontSize: '48px',
-                  marginBottom: '15px'
+                  fontSize: window.innerWidth <= 768 ? '28px' : 'clamp(36px, 8vw, 48px)',
+                  marginBottom: window.innerWidth <= 768 ? '6px' : 'clamp(10px, 2vw, 15px)'
                 }}
               >
                 {feature.icon}
               </motion.div>
               <h3 style={{
-                fontSize: '18px',
+                fontSize: window.innerWidth <= 768 ? '13px' : 'clamp(15px, 3vw, 18px)',
                 fontWeight: '600',
-                marginBottom: '8px',
+                marginBottom: window.innerWidth <= 768 ? '3px' : '6px',
                 color: 'white'
               }}>
                 {feature.title}
               </h3>
               <p style={{
                 color: '#888',
-                fontSize: '13px'
+                fontSize: window.innerWidth <= 768 ? '10px' : 'clamp(11px, 2vw, 13px)'
               }}>
                 {feature.desc}
               </p>

@@ -22,7 +22,10 @@ export default function MovieCard({ movie, onClick, onTrailerClick }) {
         cursor: 'pointer',
         position: 'relative',
         perspective: '1000px',
-        transformStyle: 'preserve-3d'
+        transformStyle: 'preserve-3d',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
       <div style={{
@@ -35,6 +38,9 @@ export default function MovieCard({ movie, onClick, onTrailerClick }) {
         boxShadow: isHovered
           ? '0 20px 60px rgba(131, 56, 236, 0.5), 0 0 40px rgba(255, 0, 110, 0.3)'
           : '0 10px 30px rgba(0, 0, 0, 0.5)',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}>
         {/* Movie Poster */}
         <div style={{
@@ -141,7 +147,12 @@ export default function MovieCard({ movie, onClick, onTrailerClick }) {
         </div>
 
         {/* Movie Info */}
-        <div style={{ padding: '20px' }}>
+        <div style={{ 
+          padding: '20px',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
           <motion.h3
             animate={{
               background: isHovered
@@ -155,7 +166,12 @@ export default function MovieCard({ movie, onClick, onTrailerClick }) {
               fontSize: '22px',
               fontWeight: '700',
               marginBottom: '8px',
-              fontFamily: "'Orbitron', sans-serif"
+              fontFamily: "'Orbitron', sans-serif",
+              minHeight: '56px',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
             }}
           >
             {movie.title}
@@ -164,7 +180,8 @@ export default function MovieCard({ movie, onClick, onTrailerClick }) {
           <p style={{
             color: '#a0a0a0',
             fontSize: '14px',
-            marginBottom: '12px'
+            marginBottom: '12px',
+            minHeight: '20px'
           }}>
             {movie.genre}
           </p>
@@ -185,58 +202,69 @@ export default function MovieCard({ movie, onClick, onTrailerClick }) {
             color: '#b0b0b0',
             fontSize: '13px',
             lineHeight: '1.5',
-            marginBottom: '15px'
+            marginBottom: '15px',
+            flex: 1,
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            minHeight: '60px'
           }}>
             {movie.description}
           </p>
 
-          {/* Trailer Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={(e) => {
-              e.stopPropagation()
-              onTrailerClick(movie)
-            }}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              background: 'rgba(255, 255, 255, 0.05)',
-              color: 'white',
-              fontSize: '12px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '5px',
-              fontFamily: "'Poppins', sans-serif",
-              marginBottom: '12px'
-            }}
-          >
-            <Film size={14} />
-            Watch Trailer
-          </motion.button>
+          {/* Buttons Container */}
+          <div style={{
+            marginTop: 'auto'
+          }}>
+            {/* Trailer Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation()
+                onTrailerClick(movie)
+              }}
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: 'white',
+                fontSize: '12px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '5px',
+                fontFamily: "'Poppins', sans-serif",
+                marginBottom: '12px'
+              }}
+            >
+              <Film size={14} />
+              Watch Trailer
+            </motion.button>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '12px',
-              border: 'none',
-              background: 'linear-gradient(135deg, #ff006e, #8338ec)',
-              color: 'white',
-              fontWeight: '600',
-              fontSize: '14px',
-              cursor: 'pointer',
-              fontFamily: "'Poppins', sans-serif"
-            }}
-          >
-            Book Now
-          </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '12px',
+                border: 'none',
+                background: 'linear-gradient(135deg, #ff006e, #8338ec)',
+                color: 'white',
+                fontWeight: '600',
+                fontSize: '14px',
+                cursor: 'pointer',
+                fontFamily: "'Poppins', sans-serif"
+              }}
+            >
+              Book Now
+            </motion.button>
+          </div>
         </div>
       </div>
     </motion.div>

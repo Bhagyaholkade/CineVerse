@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Star, Clock, MapPin, Calendar, Users, Ticket } from 'lucide-react'
+import { Star, Clock, MapPin, Calendar, Ticket } from 'lucide-react'
 import { useState } from 'react'
 
 export default function EventCard({ event, onClick }) {
@@ -26,7 +26,10 @@ export default function EventCard({ event, onClick }) {
         cursor: 'pointer',
         position: 'relative',
         perspective: '1000px',
-        transformStyle: 'preserve-3d'
+        transformStyle: 'preserve-3d',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
       <div style={{
@@ -39,6 +42,9 @@ export default function EventCard({ event, onClick }) {
         boxShadow: isHovered
           ? '0 20px 60px rgba(131, 56, 236, 0.5), 0 0 40px rgba(255, 0, 110, 0.3)'
           : '0 10px 30px rgba(0, 0, 0, 0.5)',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}>
         {/* Event Poster */}
         <div style={{
@@ -143,7 +149,12 @@ export default function EventCard({ event, onClick }) {
         </div>
 
         {/* Event Info */}
-        <div style={{ padding: '20px' }}>
+        <div style={{ 
+          padding: '20px',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
           <motion.h3
             animate={{
               background: isHovered
@@ -154,10 +165,15 @@ export default function EventCard({ event, onClick }) {
               backgroundClip: 'text'
             }}
             style={{
-              fontSize: '22px',
+              fontSize: 'clamp(18px, 4vw, 22px)',
               fontWeight: '700',
               marginBottom: '4px',
-              fontFamily: "'Orbitron', sans-serif"
+              fontFamily: "'Orbitron', sans-serif",
+              minHeight: '56px',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
             }}
           >
             {event.title}
@@ -167,7 +183,11 @@ export default function EventCard({ event, onClick }) {
             color: '#a0a0a0',
             fontSize: '14px',
             marginBottom: '12px',
-            fontWeight: '500'
+            fontWeight: '500',
+            minHeight: '20px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
           }}>
             {event.artist}
           </p>
@@ -231,7 +251,9 @@ export default function EventCard({ event, onClick }) {
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            flex: 1,
+            minHeight: '40px'
           }}>
             {event.description}
           </p>
@@ -241,7 +263,7 @@ export default function EventCard({ event, onClick }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginTop: '15px',
+            marginTop: 'auto',
             paddingTop: '15px',
             borderTop: '1px solid rgba(255, 255, 255, 0.1)'
           }}>
@@ -259,7 +281,7 @@ export default function EventCard({ event, onClick }) {
                 gap: '5px'
               }}>
                 <span style={{
-                  fontSize: '24px',
+                  fontSize: 'clamp(20px, 4vw, 24px)',
                   fontWeight: '700',
                   color: '#ff006e',
                   fontFamily: "'Orbitron', sans-serif"
@@ -267,7 +289,7 @@ export default function EventCard({ event, onClick }) {
                   ₹{firstPrice}
                 </span>
                 <span style={{
-                  fontSize: '11px',
+                  fontSize: 'clamp(10px, 2vw, 11px)',
                   color: '#666'
                 }}>
                   {priceLabel}
@@ -278,6 +300,10 @@ export default function EventCard({ event, onClick }) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation()
+                onClick(event)
+              }}
               style={{
                 padding: '12px 24px',
                 borderRadius: '12px',

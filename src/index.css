@@ -72,7 +72,39 @@ body {
   to { transform: rotate(360deg); }
 }
 
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
 /* Smooth transitions */
 * {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Responsive Payment Grid */
+@media (min-width: 768px) {
+  .payment-grid-responsive {
+    grid-template-columns: 1fr 400px !important;
+  }
+}
+
+/* Responsive Utilities */
+@media (max-width: 767px) {
+  /* Mobile adjustments */
+  body {
+    font-size: 14px;
+  }
+
+  /* Hide scroll buttons on mobile for horizontal carousels */
+  .scroll-button-mobile-hide {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small devices */
+  .payment-grid-responsive {
+    gap: 20px !important;
+  }
 }

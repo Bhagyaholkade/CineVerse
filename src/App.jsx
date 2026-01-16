@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import Background3D from './components/Background3D'
 import Header from './components/Header'
@@ -24,8 +24,26 @@ function App() {
   const [trailerMovie, setTrailerMovie] = useState(null)
   const [showVoiceSearch, setShowVoiceSearch] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState(null)
+
+  // Initialize authentication state from localStorage
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const savedAuth = localStorage.getItem('isAuthenticated')
+    return savedAuth === 'true'
+  })
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user')
+    return savedUser ? JSON.parse(savedUser) : null
+  })
+
+  // Persist authentication state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('isAuthenticated', isAuthenticated)
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user))
+    } else {
+      localStorage.removeItem('user')
+    }
+  }, [isAuthenticated, user])
 
   const handleMovieSelect = (movie) => {
     if (!isAuthenticated) {
@@ -115,6 +133,8 @@ function App() {
   const handleLogout = () => {
     setIsAuthenticated(false)
     setUser(null)
+    localStorage.removeItem('isAuthenticated')
+    localStorage.removeItem('user')
     setCurrentPage('home')
   }
 

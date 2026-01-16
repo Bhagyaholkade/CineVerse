@@ -134,7 +134,7 @@ export default function SignUpPage({ onSignUp, onNavigateToLogin, onBack }) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '120px 20px 40px'
+      padding: 'clamp(80px, 15vh, 120px) 15px 40px'
     }}>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -145,23 +145,23 @@ export default function SignUpPage({ onSignUp, onNavigateToLogin, onBack }) {
           maxWidth: '480px',
           background: 'rgba(255, 255, 255, 0.03)',
           backdropFilter: 'blur(20px)',
-          borderRadius: '30px',
+          borderRadius: 'clamp(20px, 4vw, 30px)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
-          padding: '50px',
+          padding: 'clamp(30px, 6vw, 50px)',
           boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
         }}
       >
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(30px, 5vw, 40px)' }}>
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring' }}
             style={{
-              width: '80px',
-              height: '80px',
+              width: 'clamp(60px, 12vw, 80px)',
+              height: 'clamp(60px, 12vw, 80px)',
               margin: '0 auto 20px',
-              borderRadius: '20px',
+              borderRadius: 'clamp(15px, 3vw, 20px)',
               background: 'linear-gradient(135deg, #ff006e, #8338ec)',
               display: 'flex',
               alignItems: 'center',
@@ -169,17 +169,17 @@ export default function SignUpPage({ onSignUp, onNavigateToLogin, onBack }) {
               boxShadow: '0 10px 30px rgba(255, 0, 110, 0.4)'
             }}
           >
-            <UserPlus size={40} color="white" />
+            <UserPlus size={window.innerWidth < 480 ? 30 : 40} color="white" />
           </motion.div>
           <h1 style={{
-            fontSize: '36px',
+            fontSize: 'clamp(28px, 7vw, 36px)',
             fontWeight: '800',
             marginBottom: '10px',
             fontFamily: "'Orbitron', sans-serif"
           }}>
             Create Account
           </h1>
-          <p style={{ color: '#888', fontSize: '15px' }}>
+          <p style={{ color: '#888', fontSize: 'clamp(13px, 2.5vw, 15px)' }}>
             Join CineVerse for the ultimate movie experience
           </p>
         </div>

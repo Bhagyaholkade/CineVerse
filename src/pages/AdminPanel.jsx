@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { 
-  Film, Calendar, DollarSign, Users, Settings, 
-  BarChart3, Plus, Edit, Trash2, Eye, X 
+  Film, Calendar, Settings, Users, X, BarChart3
 } from 'lucide-react'
 import AdminMovies from '../components/admin/AdminMovies'
 import AdminTheatres from '../components/admin/AdminTheatres'
@@ -12,6 +11,7 @@ import AdminDashboard from '../components/admin/AdminDashboard'
 
 export default function AdminPanel({ onBack }) {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -24,13 +24,13 @@ export default function AdminPanel({ onBack }) {
   return (
     <div style={{
       minHeight: '100vh',
-      paddingTop: '100px',
+      paddingTop: isMobile ? '80px' : '100px',
       paddingBottom: '60px'
     }}>
       <div style={{
         maxWidth: '1600px',
         margin: '0 auto',
-        padding: '0 40px'
+        padding: isMobile ? '0 16px' : '0 40px'
       }}>
         {/* Header */}
         <motion.div
@@ -38,14 +38,16 @@ export default function AdminPanel({ onBack }) {
           animate={{ y: 0, opacity: 1 }}
           style={{
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '40px'
+            alignItems: isMobile ? 'flex-start' : 'center',
+            marginBottom: isMobile ? '25px' : '40px',
+            gap: isMobile ? '15px' : '0'
           }}
         >
           <div>
             <h1 style={{
-              fontSize: '48px',
+              fontSize: isMobile ? '32px' : '48px',
               fontWeight: '900',
               fontFamily: "'Orbitron', sans-serif",
               background: 'linear-gradient(135deg, #ff006e, #8338ec)',
@@ -55,7 +57,7 @@ export default function AdminPanel({ onBack }) {
             }}>
               Admin Panel
             </h1>
-            <p style={{ color: '#888', fontSize: '16px' }}>
+            <p style={{ color: '#888', fontSize: isMobile ? '14px' : '16px' }}>
               Manage your cinema operations
             </p>
           </div>
@@ -65,7 +67,7 @@ export default function AdminPanel({ onBack }) {
             whileTap={{ scale: 0.95 }}
             onClick={onBack}
             style={{
-              padding: '12px 30px',
+              padding: isMobile ? '10px 20px' : '12px 30px',
               borderRadius: '30px',
               border: '2px solid rgba(255, 255, 255, 0.2)',
               background: 'rgba(255, 255, 255, 0.05)',
@@ -74,11 +76,12 @@ export default function AdminPanel({ onBack }) {
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              fontSize: '16px',
-              fontWeight: '600'
+              fontSize: isMobile ? '14px' : '16px',
+              fontWeight: '600',
+              alignSelf: isMobile ? 'flex-start' : 'auto'
             }}
           >
-            <X size={20} />
+            <X size={18} />
             Exit Admin
           </motion.button>
         </motion.div>
@@ -90,10 +93,13 @@ export default function AdminPanel({ onBack }) {
           transition={{ delay: 0.2 }}
           style={{
             display: 'flex',
-            gap: '15px',
-            marginBottom: '40px',
+            gap: isMobile ? '10px' : '15px',
+            marginBottom: isMobile ? '25px' : '40px',
             overflowX: 'auto',
-            padding: '10px 0'
+            padding: '10px 0',
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
           }}
         >
           {tabs.map((tab) => {
@@ -105,7 +111,7 @@ export default function AdminPanel({ onBack }) {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  padding: '15px 30px',
+                  padding: isMobile ? '12px 20px' : '15px 30px',
                   borderRadius: '20px',
                   border: activeTab === tab.id 
                     ? '2px solid #ff006e' 
@@ -117,14 +123,15 @@ export default function AdminPanel({ onBack }) {
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '16px',
+                  gap: isMobile ? '8px' : '10px',
+                  fontSize: isMobile ? '14px' : '16px',
                   fontWeight: '600',
                   whiteSpace: 'nowrap',
-                  transition: 'all 0.3s'
+                  transition: 'all 0.3s',
+                  flexShrink: 0
                 }}
               >
-                <Icon size={20} />
+                <Icon size={isMobile ? 18 : 20} />
                 {tab.label}
               </motion.button>
             )
