@@ -16,6 +16,7 @@ import SettingsPage from './pages/SettingsPage'
 import AdminDashboard from './pages/AdminDashboard'
 import MovieTrailer from './components/MovieTrailer'
 import VoiceSearch from './components/VoiceSearch'
+import Footer from './components/Footer'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -287,6 +288,8 @@ function App() {
           onSearch={handleVoiceSearch}
         />
       )}
+
+          <Footer onLogoClick={handleLogoClick} />
         </>
       )}
     </>

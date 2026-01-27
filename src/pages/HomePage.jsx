@@ -3,8 +3,9 @@ import { useState, useRef } from 'react'
 import MovieCard from '../components/MovieCard'
 import EventCard from '../components/EventCard'
 import HeroBanner from '../components/HeroBanner'
+import CafeMenu from '../components/CafeMenu'
 import { moviesData, languages, comedyShows, concerts, liveEvents, theatrePlays } from '../data/moviesData'
-import { ChevronLeft, ChevronRight, TrendingUp, Calendar, Globe2, Film, Laugh, Music, Ticket, Drama } from 'lucide-react'
+import { ChevronLeft, ChevronRight, TrendingUp, Calendar, Globe2, Film, Laugh, Music, Ticket, Drama, Coffee, Sparkles } from 'lucide-react'
 
 export default function HomePage({ onMovieSelect, onTrailerClick }) {
   const nowShowingRef = useRef(null)
@@ -22,6 +23,7 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
   const [playsPos, setPlaysPos] = useState(0)
   const [selectedLanguage, setSelectedLanguage] = useState('All')
   const [loading, setLoading] = useState(false)
+  const [showCafeMenu, setShowCafeMenu] = useState(false)
 
   // Filter movies by language
   const nowShowing = moviesData.filter(m => {
@@ -136,6 +138,208 @@ export default function HomePage({ onMovieSelect, onTrailerClick }) {
     <div style={{ minHeight: '100vh', paddingBottom: window.innerWidth <= 768 ? '40px' : '80px' }}>
       {/* Hero Banner Slider */}
       <HeroBanner onBookNow={handleBookNow} onMoreInfo={handleMoreInfo} />
+
+      {/* Cafe Banner Section */}
+      <div style={{
+        padding: window.innerWidth <= 768 ? '20px 15px' : '40px 20px',
+        maxWidth: '1400px',
+        margin: '0 auto'
+      }}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={{ scale: 1.01 }}
+          onClick={() => setShowCafeMenu(true)}
+          style={{
+            background: 'linear-gradient(135deg, rgba(255, 0, 110, 0.15), rgba(131, 56, 236, 0.15))',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '20px',
+            border: '2px solid rgba(255, 0, 110, 0.3)',
+            padding: window.innerWidth <= 768 ? '20px' : '30px 40px',
+            cursor: 'pointer',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 10px 40px rgba(255, 0, 110, 0.2)'
+          }}
+        >
+          {/* Animated background gradient */}
+          <motion.div
+            animate={{
+              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: 'linear'
+            }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent)',
+              backgroundSize: '200% 100%',
+              pointerEvents: 'none'
+            }}
+          />
+
+          {/* Floating food emojis */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: 'none',
+            overflow: 'hidden'
+          }}>
+            {['🍿', '🥤', '🍕', '🍔', '🍦', '☕'].map((emoji, i) => (
+              <motion.span
+                key={i}
+                animate={{
+                  y: [100, -20],
+                  opacity: [0, 0.3, 0.3, 0],
+                  rotate: [0, 360]
+                }}
+                transition={{
+                  duration: 8 + i * 2,
+                  repeat: Infinity,
+                  delay: i * 1.5,
+                  ease: 'linear'
+                }}
+                style={{
+                  position: 'absolute',
+                  left: `${10 + i * 15}%`,
+                  bottom: 0,
+                  fontSize: window.innerWidth <= 768 ? '20px' : '30px'
+                }}
+              >
+                {emoji}
+              </motion.span>
+            ))}
+          </div>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '20px',
+            position: 'relative',
+            zIndex: 1
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: window.innerWidth <= 768 ? '12px' : '20px' }}>
+              <motion.div
+                animate={{
+                  rotate: [0, 10, -10, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut'
+                }}
+                style={{
+                  width: window.innerWidth <= 768 ? '55px' : '70px',
+                  height: window.innerWidth <= 768 ? '55px' : '70px',
+                  borderRadius: '18px',
+                  background: 'linear-gradient(135deg, #ff006e, #8338ec)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: window.innerWidth <= 768 ? '28px' : '36px',
+                  boxShadow: '0 10px 30px rgba(255, 0, 110, 0.4)'
+                }}
+              >
+                🍿
+              </motion.div>
+              <div>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  marginBottom: '5px'
+                }}>
+                  <h2 style={{
+                    fontSize: window.innerWidth <= 768 ? '20px' : 'clamp(24px, 5vw, 32px)',
+                    fontWeight: '800',
+                    fontFamily: "'Orbitron', sans-serif",
+                    background: 'linear-gradient(135deg, #ff006e, #8338ec)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    CineVerse Cafe
+                  </h2>
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <Sparkles size={window.innerWidth <= 768 ? 18 : 22} color="#ffd700" />
+                  </motion.div>
+                </div>
+                <p style={{
+                  color: '#aaa',
+                  fontSize: window.innerWidth <= 768 ? '12px' : '14px'
+                }}>
+                  Popcorn, Nachos, Beverages & more - Order now for your movie!
+                </p>
+              </div>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(255, 0, 110, 0.5)' }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                padding: window.innerWidth <= 768 ? '12px 24px' : '15px 35px',
+                borderRadius: '30px',
+                border: 'none',
+                background: 'linear-gradient(135deg, #ff006e, #8338ec)',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: window.innerWidth <= 768 ? '13px' : '15px',
+                cursor: 'pointer',
+                fontFamily: "'Poppins', sans-serif",
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                boxShadow: '0 5px 20px rgba(255, 0, 110, 0.4)'
+              }}
+            >
+              <Coffee size={window.innerWidth <= 768 ? 18 : 20} />
+              Order Now
+            </motion.button>
+          </div>
+
+          {/* Discount badge */}
+          <motion.div
+            initial={{ rotate: -5 }}
+            animate={{ rotate: [5, -5, 5] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            style={{
+              position: 'absolute',
+              top: window.innerWidth <= 768 ? '10px' : '15px',
+              right: window.innerWidth <= 768 ? '10px' : '20px',
+              padding: window.innerWidth <= 768 ? '6px 12px' : '8px 16px',
+              borderRadius: '20px',
+              background: '#06ffa5',
+              color: '#000',
+              fontSize: window.innerWidth <= 768 ? '10px' : '12px',
+              fontWeight: '800',
+              boxShadow: '0 5px 15px rgba(6, 255, 165, 0.4)'
+            }}
+          >
+            20% OFF on Combos!
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Cafe Menu Modal */}
+      <CafeMenu
+        isOpen={showCafeMenu}
+        onClose={() => setShowCafeMenu(false)}
+      />
 
       {/* Language Filter Section - Compact Mobile Version */}
       <div style={{
